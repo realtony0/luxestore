@@ -1,0 +1,76 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import type { Product } from "@/lib/products";
+import ProductCard from "@/components/ProductCard";
+
+type ModeClothingProduct = Product & { subCategory: string | null };
+
+type Props = {
+  products: ModeClothingProduct[];
+  subcategories?: string[];
+};
+
+export default function ModeClothingSelector({ products, subcategories = [] }: Props) {
+  const availableSubCategories = useMemo(() => {
+    const names = subcategories.length > 0
+      ? subcategories
+      : products.map((product) => product.subCategory ?? "");
+    return Array.from(new Set(names.map((name) => name.trim()).filter(Boolean)));
+  }, [products, subcategories]);
+  const hasOtherClothing = products.some((product) => !product.subCategory);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>("all");
+  const activeSubCategory =
+    selectedSubCategory === "all" ||
+    selectedSubCategory === "other" ||
+    availableSubCategories.includes(selectedSubCategory)
+      ? selectedSubCategory
+      : "all";
+
+  const filteredProducts = useMemo(() => {
+    if (activeSubCategory === "all") return products;
+    if (activeSubCategory === "other") {
+      return products.filter((product) => !product.subCategory);
+    }
+    return products.filter((product) => product.subCategory === activeSubCategory);
+  }, [products, activeSubCategory]);
+
+  return (
+    <div className="space-y-5 sm:space-y-6">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 sm:p-4">
+        <label
+          htmlFor="mode-sub-category"
+          className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)]"
+        >
+          Clothing subcategory
+        </label>
+        <select
+          id="mode-sub-category"
+          value={activeSubCategory}
+          onChange={(e) => setSelectedSubCategory(e.target.value)}
+          className="mt-2 w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm font-medium text-[var(--foreground)]"
+        >
+          <option value="all">All clothes</option>
+          {availableSubCategories.map((subCategory) => (
+            <option key={subCategory} value={subCategory}>
+              {subCategory}
+            </option>
+          ))}
+          {hasOtherClothing && <option value="other">Other clothing</option>}
+        </select>
+      </div>
+
+      {filteredProducts.length === 0 ? (
+        <p className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-6 text-center text-sm text-[var(--muted)]">
+          No products in this subcategory.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 min-[460px]:grid-cols-2 md:gap-6 lg:grid-cols-4 lg:gap-8">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
