@@ -12,7 +12,12 @@
       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80"
     ],
     "color": "Rose, White",
-    "sizes": ["S", "M", "L", "XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "description": "Soft heavy cotton tee with a relaxed streetwear fit."
   },
   {
@@ -28,7 +33,13 @@
       "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=900&q=80"
     ],
     "color": "Ivory, Beige",
-    "sizes": ["37", "38", "39", "40", "41"],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41"
+    ],
     "description": "Chunky sole sneakers designed for comfort and daily wear."
   },
   {
@@ -89,60 +100,11 @@
       "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=900&q=80"
     ],
     "color": "Lilac, Cream",
-    "sizes": ["S", "M", "L"],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
     "description": "Matching set built for comfort with a polished street look."
-  },
-  {
-    "id": "u1",
-    "slug": "mini-speaker-glow",
-    "name": "Mini Speaker Glow",
-    "price": 79,
-    "category": "Electronics",
-    "universe": "tout",
-    "image": "https://images.unsplash.com/photo-1589003077984-894e133dabab?auto=format&fit=crop&w=900&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1589003077984-894e133dabab?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=900&q=80"
-    ],
-    "description": "Portable Bluetooth speaker with clear sound and compact size."
-  },
-  {
-    "id": "u2",
-    "slug": "compact-blender-pink",
-    "name": "Compact Blender",
-    "price": 89,
-    "category": "Home appliances",
-    "universe": "tout",
-    "image": "https://images.unsplash.com/photo-1570222094114-d1c51d3d5c2a?auto=format&fit=crop&w=900&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1570222094114-d1c51d3d5c2a?auto=format&fit=crop&w=900&q=80"
-    ],
-    "description": "Compact blender for smoothies and fast daily prep."
-  },
-  {
-    "id": "u3",
-    "slug": "vanity-organizer-soft",
-    "name": "Vanity Organizer",
-    "price": 39,
-    "category": "Home accessories",
-    "universe": "tout",
-    "image": "https://images.unsplash.com/photo-1616627547584-bf28cee262db?auto=format&fit=crop&w=900&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1616627547584-bf28cee262db?auto=format&fit=crop&w=900&q=80"
-    ],
-    "description": "Clean makeup and accessory organizer for tidy storage."
-  },
-  {
-    "id": "u4",
-    "slug": "travel-pouch-kit",
-    "name": "Travel Pouch Kit",
-    "price": 29,
-    "category": "Accessories & misc",
-    "universe": "tout",
-    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=80"
-    ],
-    "description": "Multi-purpose pouch set for travel and everyday organization."
   }
 ]

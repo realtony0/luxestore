@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getProductBySlug, getProducts } from "@/lib/products-server";
 import { getModeSubcategories } from "@/lib/categories-data";
 import { formatPrice } from "@/lib/products";
-import { mapUniverseCategory, resolveModeDisplayCategory } from "@/lib/universe-categories";
+import { resolveModeDisplayCategory } from "@/lib/universe-categories";
 import AddToCartActions from "@/components/AddToCartActions";
 import ProductGallery from "@/components/ProductGallery";
 
@@ -15,7 +15,9 @@ export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const products = await getProducts();
-  return products.map((product) => ({ slug: product.slug }));
+  return products
+    .filter((product) => product.universe === "mode")
+    .map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -53,16 +55,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product) notFound();
+  if (!product || product.universe !== "mode") notFound();
 
-  const backHref = product.universe === "mode" ? "/mode" : "/univers";
-  const modeDisplay = product.universe === "mode"
-    ? resolveModeDisplayCategory(product.category, await getModeSubcategories())
-    : null;
-  const displayedCategory = product.universe === "tout"
-    ? mapUniverseCategory(product.category)
-    : modeDisplay?.category || "Fashion";
-  const displayedSubCategory = modeDisplay?.subCategory || null;
+  const backHref = "/mode";
+  const modeDisplay = resolveModeDisplayCategory(product.category, await getModeSubcategories());
+  const displayedCategory = modeDisplay.category || "Fashion";
+  const displayedSubCategory = modeDisplay.subCategory || null;
   const gallery = Array.isArray(product.images) && product.images.length > 0
     ? product.images
     : [product.image];

@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
   const products = await getProducts();
-  return NextResponse.json(products);
+  return NextResponse.json(products.filter((product) => product.universe === "mode"));
 }
 
 export async function POST(request: NextRequest) {
@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
     name,
     price,
     category,
-    universe,
     image,
     images,
     description,
@@ -32,21 +31,18 @@ export async function POST(request: NextRequest) {
   } = body;
 
   const normalizedImages = normalizeProductImages(images, image);
-  if (!name || typeof price !== "number" || !category || !universe || normalizedImages.length === 0 || !description) {
+  if (!name || typeof price !== "number" || !category || normalizedImages.length === 0 || !description) {
     return NextResponse.json(
-      { error: "Required fields: name, price, category, universe, images/image, description." },
+      { error: "Required fields: name, price, category, images/image, description." },
       { status: 400 }
     );
-  }
-  if (universe !== "mode" && universe !== "tout") {
-    return NextResponse.json({ error: "universe must be 'mode' or 'tout'." }, { status: 400 });
   }
 
   const input: Omit<Product, "id" | "slug"> = {
     name: String(name).trim(),
     price: Number(price),
     category: String(category).trim(),
-    universe,
+    universe: "mode",
     image: normalizedImages[0],
     images: normalizedImages,
     description: String(description).trim(),

@@ -8,7 +8,7 @@ const heroImage =
 
 export const metadata: Metadata = {
   title: "Home",
-  description: "Luxe Store - Fashion & lifestyle selection.",
+  description: "Luxe Store - Curated selection.",
   alternates: {
     canonical: "/",
   },
@@ -75,13 +75,7 @@ export default function Home() {
             href="/mode"
             className="font-display inline-flex w-full items-center justify-center rounded-xl border-2 border-[var(--accent)] bg-[var(--accent)] px-8 py-3.5 text-xl tracking-[0.08em] text-white transition hover:bg-[var(--accent-deep)] hover:border-[var(--accent-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:w-auto sm:min-w-56 sm:px-12 sm:py-4 sm:text-2xl sm:tracking-[0.1em]"
           >
-            Fashion
-          </Link>
-          <Link
-            href="/univers"
-            className="font-display inline-flex w-full items-center justify-center rounded-xl border-2 border-white/60 bg-black/20 px-8 py-3.5 text-xl tracking-[0.08em] text-white transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:w-auto sm:min-w-56 sm:px-12 sm:py-4 sm:text-2xl sm:tracking-[0.1em]"
-          >
-            Lifestyle
+            Voir la boutique
           </Link>
         </div>
       </div>

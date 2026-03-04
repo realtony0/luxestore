@@ -21,12 +21,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${siteUrl}/univers`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
       url: `${siteUrl}/pourquoi-nous`,
       lastModified: now,
       changeFrequency: "weekly",
@@ -34,12 +28,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
+  const productRoutes: MetadataRoute.Sitemap = products
+    .filter((product) => product.universe === "mode")
+    .map((product) => ({
     url: `${siteUrl}/products/${product.slug}`,
     lastModified: now,
     changeFrequency: "daily",
     priority: 0.8,
-  }));
+    }));
 
   return [...staticRoutes, ...productRoutes];
 }

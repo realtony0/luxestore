@@ -61,6 +61,15 @@ export async function ensureTable() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS media_assets (
+        id TEXT PRIMARY KEY,
+        mime_type TEXT NOT NULL,
+        data_base64 TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `;
+
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS images JSONB`;
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS color_images JSONB`;
 

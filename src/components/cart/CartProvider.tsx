@@ -89,7 +89,7 @@ function parseStoredCart(raw: string | null): CartItem[] {
           typeof item.name === "string" &&
           typeof item.price === "number" &&
           typeof item.image === "string" &&
-          (item.universe === "mode" || item.universe === "tout") &&
+          item.universe === "mode" &&
           typeof item.category === "string" &&
           "quantity" in item
       )

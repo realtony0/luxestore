@@ -10,7 +10,7 @@ const defaultSocialImage =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Luxe Store — Fashion & Lifestyle", template: "%s | Luxe Store" },
+  title: { default: "Luxe Store — Fashion", template: "%s | Luxe Store" },
   description: "Clothes, shoes, wigs, sunglasses, bags & more.",
   applicationName: "Luxe Store",
   alternates: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "Luxe Store — Fashion & Lifestyle",
+    title: "Luxe Store — Fashion",
     description: "Clothes, shoes, wigs, sunglasses, bags & more.",
     type: "website",
     url: "/",
@@ -32,13 +32,13 @@ export const metadata: Metadata = {
         url: defaultSocialImage,
         width: 1200,
         height: 630,
-        alt: "Luxe Store - Fashion and lifestyle",
+        alt: "Luxe Store - Fashion",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Luxe Store — Fashion & Lifestyle",
+    title: "Luxe Store — Fashion",
     description: "Clothes, shoes, wigs, sunglasses, bags & more.",
     images: [defaultSocialImage],
   },

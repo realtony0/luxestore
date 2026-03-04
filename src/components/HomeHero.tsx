@@ -44,13 +44,7 @@ export default function HomeHero() {
             href="/mode"
             className="inline-flex w-full max-w-xs items-center justify-center rounded-full bg-[var(--accent)] px-8 py-3.5 text-sm font-medium text-white transition hover:bg-[var(--accent-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--foreground)]"
           >
-            Fashion
-          </Link>
-          <Link
-            href="/univers"
-            className="inline-flex w-full max-w-xs items-center justify-center rounded-full border-2 border-[var(--muted)] bg-transparent px-8 py-3.5 text-sm font-medium text-white transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--foreground)]"
-          >
-            Lifestyle
+            View shop
           </Link>
         </div>
         <p

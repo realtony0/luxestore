@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (body.name != null) input.name = String(body.name).trim();
   if (typeof body.price === "number") input.price = body.price;
   if (body.category != null) input.category = String(body.category).trim();
-  if (body.universe === "mode" || body.universe === "tout") input.universe = body.universe;
+  if (body.universe === "mode") input.universe = "mode";
 
   if (body.image != null || body.images != null) {
     const normalizedImages = normalizeProductImages(body.images, body.image);

@@ -1,10 +1,3 @@
-export const UNIVERSE_CATEGORIES = [
-  "Electronics",
-  "Home appliances",
-  "Home accessories",
-  "Accessories & misc",
-] as const;
-
 export const MODE_CATEGORIES = [
   "Clothes",
   "Shoes",
@@ -77,33 +70,6 @@ function detectModeClothingSubcategory(rawCategory: string): ModeClothingSubcate
   }
 
   return null;
-}
-
-export function mapUniverseCategory(rawCategory: string): (typeof UNIVERSE_CATEGORIES)[number] {
-  const category = normalize(rawCategory);
-
-  if (
-    category.includes("home appliance") ||
-    category.includes("electromenager") ||
-    category.includes("electro menager")
-  ) {
-    return "Home appliances";
-  }
-
-  if (category.includes("electronic") || category.includes("luminaire") || category.includes("electronique")) {
-    return "Electronics";
-  }
-
-  if (
-    category.includes("home accessorie") ||
-    category.includes("decoration") ||
-    category.includes("cuisine") ||
-    category.includes("accessoire maison")
-  ) {
-    return "Home accessories";
-  }
-
-  return "Accessories & misc";
 }
 
 export function mapModeCategory(rawCategory: string): (typeof MODE_CATEGORIES)[number] {

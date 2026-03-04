@@ -9,7 +9,6 @@ const SITE_ADDRESS = "Worldwide online store";
 const footerNav = [
   { href: "/", label: "Home" },
   { href: "/mode", label: "Fashion" },
-  { href: "/univers", label: "Lifestyle" },
   { href: "/pourquoi-nous", label: "About" },
 ] as const;
 

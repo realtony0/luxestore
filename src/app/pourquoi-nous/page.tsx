@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getProducts } from "@/lib/products-server";
+import { getProductsByUniverse } from "@/lib/products-server";
 import { getModeSubcategories } from "@/lib/categories-data";
-import { mapUniverseCategory, resolveModeDisplayCategory } from "@/lib/universe-categories";
+import { resolveModeDisplayCategory } from "@/lib/universe-categories";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://luxe-store.vercel.app").replace(/\/+$/, "");
 const socialImage =
@@ -11,9 +11,9 @@ const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "861970641946
 
 const commitments = [
   {
-    title: "Curated Streetwear & Lifestyle",
+    title: "Curated Streetwear Selection",
     description:
-      "Every item is selected for style, quality, and real customer demand across Fashion and Lifestyle.",
+      "Every item is selected for style, quality, and real customer demand across Fashion categories.",
   },
   {
     title: "Fast, Clear Ordering",
@@ -47,7 +47,7 @@ const testimonials = [
     rating: 5,
     quote:
       "Very smooth WhatsApp support and clear updates during the whole process.",
-    purchase: "Lifestyle order",
+    purchase: "Fashion order",
   },
   {
     name: "Amelia R.",
@@ -110,15 +110,12 @@ export const metadata: Metadata = {
 };
 
 export default async function PourquoiNousPage() {
-  const products = await getProducts();
+  const products = await getProductsByUniverse("mode");
   const modeSubcategories = await getModeSubcategories();
   const mappedCategoryCounts = new Map<string, number>();
 
   for (const product of products) {
-    const category =
-      product.universe === "tout"
-        ? mapUniverseCategory(product.category)
-        : resolveModeDisplayCategory(product.category, modeSubcategories).category;
+    const category = resolveModeDisplayCategory(product.category, modeSubcategories).category;
     mappedCategoryCounts.set(category, (mappedCategoryCounts.get(category) ?? 0) + 1);
   }
 
@@ -342,12 +339,6 @@ export default async function PourquoiNousPage() {
               className="inline-flex items-center justify-center rounded-xl bg-[var(--accent)] px-7 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-[var(--accent-deep)]"
             >
               Shop Fashion
-            </Link>
-            <Link
-              href="/univers"
-              className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] px-7 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-            >
-              Shop Lifestyle
             </Link>
           </div>
         </div>

@@ -8,7 +8,6 @@ import { useCart } from "@/components/cart/CartProvider";
 const nav = [
   { href: "/", label: "Home" },
   { href: "/mode", label: "Fashion" },
-  { href: "/univers", label: "Lifestyle" },
   { href: "/pourquoi-nous", label: "About" },
 ] as const;
 

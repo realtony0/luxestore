@@ -9,7 +9,6 @@ import {
   MODE_CLOTHING_SUBCATEGORIES,
   matchModeSubcategory,
   normalizeModeCategoryInput,
-  mapUniverseCategory,
 } from "@/lib/universe-categories";
 import {
   colorToSwatch,
@@ -20,7 +19,6 @@ import {
   type ColorImagesMap,
 } from "@/lib/product-options";
 
-type UniverseFilter = "all" | "mode" | "tout";
 type SortBy = "category" | "name" | "price-asc" | "price-desc";
 type FormMode = "create" | "edit";
 type AdminView = "products" | "categories";
@@ -30,7 +28,7 @@ type ProductFormState = {
   price: string;
   category: string;
   subCategory: string;
-  universe: "mode" | "tout";
+  universe: "mode";
   images: string[];
   description: string;
   color: string;
@@ -148,24 +146,19 @@ function toPayload(form: ProductFormState): Omit<Product, "id" | "slug"> {
     throw new Error("All fields marked * are required.");
   }
 
-  const modeCategory = form.universe === "mode" ? normalizeModeCategoryInput(category) : "";
-  const requiresModeSubcategory = form.universe === "mode" && modeCategory === "Clothes";
+  const modeCategory = normalizeModeCategoryInput(category);
+  const requiresModeSubcategory = modeCategory === "Clothes";
   if (requiresModeSubcategory && !subCategory) {
     throw new Error("Choose a subcategory for Clothes.");
   }
 
-  const productCategory =
-    form.universe === "tout"
-      ? mapUniverseCategory(category)
-      : requiresModeSubcategory
-        ? subCategory
-        : modeCategory;
+  const productCategory = requiresModeSubcategory ? subCategory : modeCategory;
 
   const payload: Omit<Product, "id" | "slug"> = {
     name,
     price,
     category: productCategory,
-    universe: form.universe,
+    universe: "mode",
     image: images[0],
     images,
     description,
@@ -196,7 +189,6 @@ export default function AdminBoutique() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [query, setQuery] = useState("");
-  const [universeFilter, setUniverseFilter] = useState<UniverseFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("category");
   const [productsError, setProductsError] = useState("");
 
@@ -245,7 +237,14 @@ export default function AdminBoutique() {
       const categoriesData = await categoriesRes.json().catch(() => []);
       const modeSubcategoriesData = await modeSubcategoriesRes.json().catch(() => []);
 
-      setProducts(Array.isArray(productsData) ? productsData : []);
+      setProducts(
+        Array.isArray(productsData)
+          ? productsData.filter(
+              (product): product is Product =>
+                Boolean(product) && typeof product === "object" && product.universe === "mode"
+            )
+          : []
+      );
       setCategories(Array.isArray(categoriesData) ? categoriesData : []);
       setModeSubcategories(Array.isArray(modeSubcategoriesData) ? modeSubcategoriesData : []);
       setProductsError("");
@@ -280,22 +279,16 @@ export default function AdminBoutique() {
       ? product.images
       : [product.image];
     const knownModeSubcategories = modeSubcategories.map((item) => item.name);
-    const modeSubCategory =
-      product.universe === "mode" ? matchModeSubcategory(product.category, knownModeSubcategories) : null;
+    const modeSubCategory = matchModeSubcategory(product.category, knownModeSubcategories);
 
     setFormMode("edit");
     setEditingId(product.id);
     setForm({
       name: product.name,
       price: String(product.price),
-      category:
-        product.universe === "mode"
-          ? modeSubCategory
-            ? "Clothes"
-            : normalizeModeCategoryInput(product.category)
-          : product.category,
+      category: modeSubCategory ? "Clothes" : normalizeModeCategoryInput(product.category),
       subCategory: modeSubCategory ?? "",
-      universe: product.universe,
+      universe: "mode",
       images,
       description: product.description,
       color: product.color || "",
@@ -637,7 +630,6 @@ export default function AdminBoutique() {
     });
   }
 
-  const existingCategories = useMemo(() => categories.map((c) => c.name), [categories]);
   const formColorOptions = useMemo(() => parseColorList(form.color), [form.color]);
   const formSizeOptions = useMemo(() => toSizes(form.sizes) || [], [form.sizes]);
   const modeSubcategoryOptions = useMemo(() => {
@@ -652,7 +644,7 @@ export default function AdminBoutique() {
     }
     return uniqueValues;
   }, [modeSubcategories, form.subCategory]);
-  const isModeClothingCategory = form.universe === "mode" && normalizeModeCategoryInput(form.category) === "Clothes";
+  const isModeClothingCategory = normalizeModeCategoryInput(form.category) === "Clothes";
 
   function setFormColors(colors: string[]) {
     const next = uniqueColors(colors);
@@ -758,7 +750,6 @@ export default function AdminBoutique() {
     const q = query.trim().toLowerCase();
 
     let list = products.filter((p) => {
-      if (universeFilter !== "all" && p.universe !== universeFilter) return false;
       if (!q) return true;
       return (
         p.name.toLowerCase().includes(q) ||
@@ -778,10 +769,9 @@ export default function AdminBoutique() {
     });
 
     return list;
-  }, [products, query, universeFilter, sortBy]);
+  }, [products, query, sortBy]);
 
   const modeCount = products.filter((p) => p.universe === "mode").length;
-  const toutCount = products.filter((p) => p.universe === "tout").length;
   const categoryCount = categories.length;
 
   return (
@@ -833,7 +823,7 @@ export default function AdminBoutique() {
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Boutique</p>
           <p className="mt-2 text-sm text-[var(--foreground)]">
-            Fashion: <span className="font-semibold">{modeCount}</span> · Lifestyle: <span className="font-semibold">{toutCount}</span>
+            Fashion: <span className="font-semibold">{modeCount}</span>
           </p>
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
@@ -1069,7 +1059,7 @@ export default function AdminBoutique() {
       )}
 
       {adminView === "products" && (
-        <div className="mb-6 grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 sm:grid-cols-3">
+        <div className="mb-6 grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 sm:grid-cols-2">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Search</label>
             <input
@@ -1079,18 +1069,6 @@ export default function AdminBoutique() {
               placeholder="Name, slug, color, category..."
               className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--foreground)]"
             />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Universe</label>
-            <select
-              value={universeFilter}
-              onChange={(e) => setUniverseFilter(e.target.value as UniverseFilter)}
-              className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--foreground)]"
-            >
-              <option value="all">All</option>
-              <option value="mode">Fashion</option>
-              <option value="tout">Universe</option>
-            </select>
           </div>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Sort</label>
@@ -1146,63 +1124,32 @@ export default function AdminBoutique() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)]">Universe *</label>
-                  <select
-                    value={form.universe}
-                    onChange={(e) => {
-                      const nextUniverse = e.target.value as "mode" | "tout";
-                      setForm((f) => ({
-                        ...f,
-                        universe: nextUniverse,
-                        category: "",
-                        subCategory: "",
-                      }));
-                    }}
-                    className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-[var(--foreground)]"
-                  >
-                    <option value="mode">Fashion</option>
-                    <option value="tout">Universe</option>
-                  </select>
+                  <label className="block text-sm font-medium text-[var(--foreground)]">Boutique</label>
+                  <div className="mt-1 rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--muted)]">
+                    Fashion
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--foreground)]">Category *</label>
-                  {form.universe === "mode" ? (
-                    <select
-                      value={form.category}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          category: e.target.value,
-                          subCategory: e.target.value === "Clothes" ? f.subCategory : "",
-                        }))
-                      }
-                      required
-                      className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-[var(--foreground)]"
-                    >
-                      <option value="">Choose</option>
-                      {MODE_CATEGORIES.map((categoryOption) => (
-                        <option key={categoryOption} value={categoryOption}>
-                          {categoryOption}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <>
-                      <input
-                        type="text"
-                        value={form.category}
-                        onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                        required
-                        list="category-list"
-                        className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-[var(--foreground)]"
-                      />
-                      <datalist id="category-list">
-                        {existingCategories.map((c) => (
-                          <option key={c} value={c} />
-                        ))}
-                      </datalist>
-                    </>
-                  )}
+                  <select
+                    value={form.category}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        category: e.target.value,
+                        subCategory: e.target.value === "Clothes" ? f.subCategory : "",
+                      }))
+                    }
+                    required
+                    className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-[var(--foreground)]"
+                  >
+                    <option value="">Choose</option>
+                    {MODE_CATEGORIES.map((categoryOption) => (
+                      <option key={categoryOption} value={categoryOption}>
+                        {categoryOption}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 {isModeClothingCategory && (
                   <div>
@@ -1548,7 +1495,6 @@ export default function AdminBoutique() {
                   <th className="border-b border-[var(--border)] p-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Name</th>
                   <th className="border-b border-[var(--border)] p-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Price</th>
                   <th className="border-b border-[var(--border)] p-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Category</th>
-                  <th className="border-b border-[var(--border)] p-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Universe</th>
                   <th className="border-b border-[var(--border)] p-3 text-right text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">Actions</th>
                 </tr>
               </thead>
@@ -1567,7 +1513,6 @@ export default function AdminBoutique() {
                     </td>
                     <td className="p-3 text-sm text-[var(--foreground)]">{formatPrice(p.price)}</td>
                     <td className="p-3 text-sm text-[var(--muted)]">{p.category}</td>
-                    <td className="p-3 text-sm text-[var(--muted)]">{p.universe}</td>
                     <td className="p-3 text-right">
                       <div className="flex justify-end gap-2">
                         <button

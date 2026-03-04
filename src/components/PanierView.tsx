@@ -30,12 +30,6 @@ export default function PanierView() {
           >
             Browse Fashion
           </Link>
-          <Link
-            href="/univers"
-            className="inline-flex h-11 w-full items-center justify-center rounded-lg border border-[var(--border)] px-6 text-sm font-semibold transition hover:border-[var(--accent)] hover:text-[var(--accent)] sm:h-auto sm:w-auto sm:py-3"
-          >
-            Browse Lifestyle
-          </Link>
         </div>
       </div>
     );

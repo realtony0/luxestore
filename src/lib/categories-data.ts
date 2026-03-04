@@ -2,10 +2,7 @@ import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import { getDb, ensureTable } from "./db";
 import { countProductsByCategory, getProducts, replaceCategory } from "./products-data";
-import {
-  MODE_CATEGORIES,
-  UNIVERSE_CATEGORIES,
-} from "./universe-categories";
+import { MODE_CATEGORIES } from "./universe-categories";
 
 const CATEGORIES_PATH = path.join(process.cwd(), "data", "categories.json");
 const MODE_SUBCATEGORIES_PATH = path.join(process.cwd(), "data", "mode-subcategories.json");
@@ -195,13 +192,14 @@ export async function getCategories(): Promise<string[]> {
     getProducts(),
     getModeSubcategories(),
   ]);
-  const productCategories = products.map((p) => p.category);
+  const productCategories = products
+    .filter((p) => p.universe === "mode")
+    .map((p) => p.category);
   return uniqSorted([
     ...registered,
     ...productCategories,
     ...MODE_CATEGORIES,
     ...modeSubcategories,
-    ...UNIVERSE_CATEGORIES,
   ]);
 }
 
@@ -210,6 +208,7 @@ export async function getCategoryInfos(): Promise<CategoryInfo[]> {
   const counts = new Map<string, number>();
 
   for (const product of products) {
+    if (product.universe !== "mode") continue;
     counts.set(product.category, (counts.get(product.category) ?? 0) + 1);
   }
 
