@@ -9,43 +9,106 @@ export function normalizeColorName(value: string): string {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  noir: "#18181b",
-  blanc: "#f8fafc",
-  gris: "#6b7280",
-  argent: "#cbd5e1",
-  anthracite: "#374151",
-  rouge: "#dc2626",
-  bordeau: "#7f1d1d",
-  bordeaux: "#7f1d1d",
-  bleu: "#2563eb",
-  "bleu marine": "#1e3a8a",
-  marine: "#1e3a8a",
-  "bleu ciel": "#0ea5e9",
-  vert: "#16a34a",
-  kaki: "#4d7c0f",
-  olive: "#4d7c0f",
-  jaune: "#facc15",
-  orange: "#f97316",
-  rose: "#ec4899",
-  violet: "#7c3aed",
-  beige: "#d6b98b",
+  black: "#000000",
+  noir: "#000000",
+  white: "#ffffff",
+  blanc: "#ffffff",
+  gray: "#808080",
+  grey: "#808080",
+  gris: "#808080",
+  silver: "#c0c0c0",
+  argent: "#c0c0c0",
+  charcoal: "#36454f",
+  anthracite: "#36454f",
+  red: "#ff0000",
+  rouge: "#ff0000",
+  burgundy: "#800020",
+  wine: "#800020",
+  bordeau: "#800020",
+  bordeaux: "#800020",
+  blue: "#0000ff",
+  bleu: "#0000ff",
+  navy: "#000080",
+  "bleu marine": "#000080",
+  marine: "#000080",
+  "sky blue": "#87ceeb",
+  "bleu ciel": "#87ceeb",
+  green: "#008000",
+  vert: "#008000",
+  khaki: "#bdb76b",
+  kaki: "#bdb76b",
+  olive: "#808000",
+  yellow: "#ffff00",
+  jaune: "#ffff00",
+  orange: "#ffa500",
+  pink: "#ffc0cb",
+  blush: "#ffc0cb",
+  rose: "#ffc0cb",
+  purple: "#800080",
+  violet: "#800080",
+  beige: "#f5f5dc",
+  nude: "#f5deb3",
+  "off white": "#f5f5f4",
+  ecru: "#f5f5dc",
+  cream: "#f5f5dc",
+  ivory: "#f5f5dc",
   creme: "#f5f5dc",
   cremee: "#f5f5dc",
-  marron: "#7c2d12",
-  camel: "#c07a42",
-  or: "#f59e0b",
-  dore: "#f59e0b",
-  cuivre: "#b45309",
+  brown: "#8b4513",
+  marron: "#8b4513",
+  chocolate: "#7b3f00",
+  caramel: "#c68e17",
+  camel: "#c19a6b",
+  gold: "#ffd700",
+  or: "#ffd700",
+  dore: "#ffd700",
+  copper: "#b87333",
+  cuivre: "#b87333",
   transparent: "#ffffff",
+  translucent: "#ffffff",
+  clear: "#ffffff",
+  multicolor: "#d1d5db",
+  "multi color": "#d1d5db",
+  "multi-color": "#d1d5db",
 };
 
-function colorFromHash(value: string): string {
-  let hash = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    hash = value.charCodeAt(i) + ((hash << 5) - hash);
+const COLOR_KEYWORD_RULES: Array<{ pattern: RegExp; swatch: string }> = [
+  { pattern: /\b(black|noir|charcoal|anthracite)\b/, swatch: "#000000" },
+  { pattern: /\b(white|blanc)\b/, swatch: "#ffffff" },
+  { pattern: /\b(gray|grey|gris)\b/, swatch: "#808080" },
+  { pattern: /\b(silver|argent)\b/, swatch: "#c0c0c0" },
+  { pattern: /\b(red|rouge)\b/, swatch: "#ff0000" },
+  { pattern: /\b(burgundy|wine|bordeaux|bordeau)\b/, swatch: "#800020" },
+  { pattern: /\b(navy|marine)\b/, swatch: "#000080" },
+  { pattern: /\b(blue|bleu)\b/, swatch: "#0000ff" },
+  { pattern: /\b(sky)\b/, swatch: "#87ceeb" },
+  { pattern: /\b(green|vert)\b/, swatch: "#008000" },
+  { pattern: /\b(khaki|kaki)\b/, swatch: "#bdb76b" },
+  { pattern: /\b(olive)\b/, swatch: "#808000" },
+  { pattern: /\b(yellow|jaune)\b/, swatch: "#ffff00" },
+  { pattern: /\b(orange)\b/, swatch: "#ffa500" },
+  { pattern: /\b(pink|rose|fuchsia|blush)\b/, swatch: "#ffc0cb" },
+  { pattern: /\b(purple|violet|lilac|lavender)\b/, swatch: "#800080" },
+  { pattern: /\b(beige|cream|creme|cremee|ivory|ecru)\b/, swatch: "#f5f5dc" },
+  { pattern: /\b(off[\s-]?white)\b/, swatch: "#f5f5f4" },
+  { pattern: /\b(nude)\b/, swatch: "#f5deb3" },
+  { pattern: /\b(brown|marron)\b/, swatch: "#8b4513" },
+  { pattern: /\b(chocolate)\b/, swatch: "#7b3f00" },
+  { pattern: /\b(caramel)\b/, swatch: "#c68e17" },
+  { pattern: /\b(camel)\b/, swatch: "#c19a6b" },
+  { pattern: /\b(gold|or|dore)\b/, swatch: "#ffd700" },
+  { pattern: /\b(copper|cuivre)\b/, swatch: "#b87333" },
+  { pattern: /\b(transparent|translucent|clear)\b/, swatch: "#ffffff" },
+  { pattern: /\b(multi[\s-]?color|multicolor)\b/, swatch: "#d1d5db" },
+];
+
+function matchColorKeyword(value: string): string | null {
+  for (const rule of COLOR_KEYWORD_RULES) {
+    if (rule.pattern.test(value)) {
+      return rule.swatch;
+    }
   }
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue} 65% 50%)`;
+  return null;
 }
 
 export function parseColorList(raw?: string): string[] {
@@ -73,7 +136,12 @@ export function colorToSwatch(color: string): string {
     return COLOR_MAP[key];
   }
 
-  return colorFromHash(key);
+  const byKeyword = matchColorKeyword(key);
+  if (byKeyword) {
+    return byKeyword;
+  }
+
+  return "#d1d5db";
 }
 
 function toImageUrl(value: unknown): string | null {

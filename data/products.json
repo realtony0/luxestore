@@ -6,10 +6,9 @@
     "price": 68,
     "category": "Clothes",
     "universe": "mode",
-    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
+    "image": "/file.svg",
     "images": [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80"
+      "/file.svg"
     ],
     "color": "Rose, White",
     "sizes": [
@@ -27,10 +26,9 @@
     "price": 120,
     "category": "Shoes",
     "universe": "mode",
-    "image": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=900&q=80",
+    "image": "/file.svg",
     "images": [
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=900&q=80"
+      "/file.svg"
     ],
     "color": "Ivory, Beige",
     "sizes": [
@@ -49,10 +47,9 @@
     "price": 165,
     "category": "Wigs",
     "universe": "mode",
-    "image": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+    "image": "/file.svg",
     "images": [
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80"
+      "/file.svg"
     ],
     "color": "Caramel",
     "description": "Natural-looking lace wig with a lightweight and breathable cap."
@@ -64,10 +61,9 @@
     "price": 55,
     "category": "Sunglasses",
     "universe": "mode",
-    "image": "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80",
+    "image": "/file.svg",
     "images": [
-      "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=900&q=80"
+      "/file.svg"
     ],
     "color": "Black, Gold",
     "description": "Statement frame with UV protection and a lightweight feel."
@@ -79,10 +75,9 @@
     "price": 95,
     "category": "Bags & more",
     "universe": "mode",
-    "image": "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=900&q=80",
+    "image": "/file.svg",
     "images": [
-      "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1542295669297-4d352b042bca?auto=format&fit=crop&w=900&q=80"
+      "/file.svg"
     ],
     "color": "Blush Pink",
     "description": "Compact crossbody bag with chain strap and structured silhouette."
@@ -94,10 +89,9 @@
     "price": 109,
     "category": "Sets",
     "universe": "mode",
-    "image": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80",
+    "image": "/file.svg",
     "images": [
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=900&q=80"
+      "/file.svg"
     ],
     "color": "Lilac, Cream",
     "sizes": [
