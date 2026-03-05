@@ -3,10 +3,16 @@ import type { Metadata } from "next";
 import { getProductsByUniverse } from "@/lib/products-server";
 import { getModeSubcategories } from "@/lib/categories-data";
 import { resolveModeDisplayCategory } from "@/lib/universe-categories";
+import {
+  BRAND_KEYWORDS,
+  DEFAULT_SOCIAL_IMAGE,
+  SITE_NAME,
+  getCanonicalUrl,
+  getSiteUrl,
+} from "@/lib/seo";
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://luxe-store.vercel.app").replace(/\/+$/, "");
-const socialImage =
-  "https://images.unsplash.com/photo-1464863979621-258859e62245?auto=format&fit=crop&w=1200&h=630&q=80";
+const siteUrl = getSiteUrl();
+const socialImage = DEFAULT_SOCIAL_IMAGE;
 const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "8619706419469").replace(/\D+/g, "");
 
 const commitments = [
@@ -84,26 +90,27 @@ const faqs = [
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Why choose Luxe Store: commitments, reviews, and FAQ.",
+  description: "Why choose Luxe Store: commitments, customer reviews, and FAQ.",
+  keywords: [...BRAND_KEYWORDS, "about luxe store", "faq boutique mode"],
   alternates: {
     canonical: "/pourquoi-nous",
   },
   openGraph: {
-    title: "Why choose Luxe Store",
+    title: `Why choose ${SITE_NAME}`,
     description: "Commitments, customer reviews, and a clear professional order flow.",
-    url: "/pourquoi-nous",
+    url: getCanonicalUrl("/pourquoi-nous"),
     images: [
       {
         url: socialImage,
         width: 1200,
         height: 630,
-        alt: "Why choose Luxe Store",
+        alt: `Why choose ${SITE_NAME}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Why choose Luxe Store",
+    title: `Why choose ${SITE_NAME}`,
     description: "Commitments, customer reviews, and a clear professional order flow.",
     images: [socialImage],
   },

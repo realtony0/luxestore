@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Product } from "@/lib/products";
-import ProductCard from "@/components/ProductCard";
+import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
 
-type ModeClothingProduct = Product & { subCategory: string | null };
+export type ModeClothingProduct = ProductCardProduct & { subCategory: string | null };
 
 type Props = {
   products: ModeClothingProduct[];

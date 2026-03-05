@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
+import { getCanonicalUrl, getSiteUrl } from "@/lib/seo";
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://luxe-store.vercel.app").replace(/\/+$/, "");
+const siteUrl = getSiteUrl();
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/admin/*", "/api", "/api/*"],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
+    sitemap: getCanonicalUrl("/sitemap.xml"),
   };
 }

@@ -6,17 +6,44 @@ import {
   MODE_CATEGORIES,
   resolveModeDisplayCategory,
 } from "@/lib/universe-categories";
-import ProductCard from "@/components/ProductCard";
-import ModeClothingSelector from "@/components/ModeClothingSelector";
+import ProductCard, { type ProductCardProduct } from "@/components/ProductCard";
+import ModeClothingSelector, { type ModeClothingProduct } from "@/components/ModeClothingSelector";
+import { BRAND_KEYWORDS, DEFAULT_SOCIAL_IMAGE, SITE_NAME, getCanonicalUrl, getSiteUrl } from "@/lib/seo";
 
 const heroImage =
   "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=2000&q=80";
+const siteUrl = getSiteUrl();
+const canonicalPath = "/mode";
 
 export const metadata: Metadata = {
   title: "Fashion",
-  description: "Luxe Store fashion selection.",
+  description:
+    "Explorez la collection mode de Luxe Store: vetements, chaussures, perruques, lunettes et accessoires.",
+  keywords: [...BRAND_KEYWORDS, "collection mode", "shop fashion"],
   alternates: {
-    canonical: "/mode",
+    canonical: canonicalPath,
+  },
+  openGraph: {
+    title: `${SITE_NAME} — Fashion`,
+    description:
+      "Explorez la collection mode de Luxe Store: vetements, chaussures, perruques, lunettes et accessoires.",
+    url: getCanonicalUrl(canonicalPath),
+    type: "website",
+    images: [
+      {
+        url: DEFAULT_SOCIAL_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - Fashion`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — Fashion`,
+    description:
+      "Explorez la collection mode de Luxe Store: vetements, chaussures, perruques, lunettes et accessoires.",
+    images: [DEFAULT_SOCIAL_IMAGE],
   },
 };
 
@@ -29,10 +56,24 @@ function slug(s: string) {
 export default async function ModePage() {
   const products = await getProductsByUniverse("mode");
   const modeSubcategories = await getModeSubcategories();
-  const mappedProducts = products.map((product) => ({
-    ...product,
-    ...resolveModeDisplayCategory(product.category, modeSubcategories),
-  }));
+  const mappedProducts: ModeClothingProduct[] = products.map((product) => {
+    const modeDisplay = resolveModeDisplayCategory(product.category, modeSubcategories);
+    const cardProduct: ProductCardProduct = {
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      universe: product.universe,
+      category: modeDisplay.category,
+      ...(product.color ? { color: product.color } : {}),
+    };
+
+    return {
+      ...cardProduct,
+      subCategory: modeDisplay.subCategory,
+    };
+  });
 
   const categories = MODE_CATEGORIES.filter((category) =>
     mappedProducts.some((product) => product.category === category)
@@ -43,9 +84,57 @@ export default async function ModePage() {
     category,
     products: mappedProducts.filter((p) => p.category === category),
   }));
+  const itemList = mappedProducts.slice(0, 24).map((product, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    url: `${siteUrl}/products/${product.slug}`,
+    name: product.name,
+  }));
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${siteUrl}${canonicalPath}#collection`,
+        url: `${siteUrl}${canonicalPath}`,
+        name: `${SITE_NAME} Fashion`,
+        description:
+          "Collection mode: vetements, chaussures, perruques, lunettes de soleil et accessoires.",
+        inLanguage: "en",
+        isPartOf: {
+          "@id": `${siteUrl}/#website`,
+        },
+      },
+      {
+        "@type": "ItemList",
+        itemListElement: itemList,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: `${siteUrl}/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Fashion",
+            item: `${siteUrl}${canonicalPath}`,
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <section className="relative flex min-h-[38svh] items-center justify-center overflow-hidden sm:min-h-[42vh]">
         <div className="absolute inset-0">
           <Image src={heroImage} alt="" fill priority sizes="100vw" className="object-cover brightness-[0.5]" />

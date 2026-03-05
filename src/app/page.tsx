@@ -1,16 +1,47 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import {
+  BRAND_KEYWORDS,
+  DEFAULT_SOCIAL_IMAGE,
+  SITE_NAME,
+  getCanonicalUrl,
+  getSiteUrl,
+} from "@/lib/seo";
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://luxe-store.vercel.app").replace(/\/+$/, "");
+const siteUrl = getSiteUrl();
 const heroImage =
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=80";
 
 export const metadata: Metadata = {
-  title: "Home",
-  description: "Luxe Store - Curated selection.",
+  title: "Boutique Mode En Ligne",
+  description:
+    "Commandez vos vetements, chaussures, perruques, lunettes et accessoires sur Luxe Store.",
+  keywords: BRAND_KEYWORDS,
   alternates: {
     canonical: "/",
+  },
+  openGraph: {
+    title: `${SITE_NAME} — Boutique Mode En Ligne`,
+    description:
+      "Selection mode, streetwear et accessoires avec commande rapide via WhatsApp.",
+    type: "website",
+    url: getCanonicalUrl("/"),
+    images: [
+      {
+        url: DEFAULT_SOCIAL_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} - Boutique mode`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — Boutique Mode En Ligne`,
+    description:
+      "Selection mode, streetwear et accessoires avec commande rapide via WhatsApp.",
+    images: [DEFAULT_SOCIAL_IMAGE],
   },
 };
 
@@ -21,14 +52,14 @@ export default function Home() {
       {
         "@type": "Organization",
         "@id": `${siteUrl}/#organization`,
-        name: "Luxe Store",
+        name: SITE_NAME,
         url: siteUrl,
         logo: `${siteUrl}/favicon.ico`,
       },
       {
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
-        name: "Luxe Store",
+        name: SITE_NAME,
         url: siteUrl,
         inLanguage: "en",
         publisher: {

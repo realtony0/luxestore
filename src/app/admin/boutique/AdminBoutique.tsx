@@ -18,6 +18,12 @@ import {
   parseColorList,
   type ColorImagesMap,
 } from "@/lib/product-options";
+import {
+  ADMIN_LIMITS,
+  imagesPerColorLimitMessage,
+  imagesPerProductLimitMessage,
+  productLimitReachedMessage,
+} from "@/lib/admin-limits";
 
 type SortBy = "category" | "name" | "price-asc" | "price-desc";
 type FormMode = "create" | "edit";
@@ -145,6 +151,9 @@ function toPayload(form: ProductFormState): Omit<Product, "id" | "slug"> {
   if (!name || !category || images.length === 0 || !description) {
     throw new Error("All fields marked * are required.");
   }
+  if (images.length > ADMIN_LIMITS.maxImagesPerProduct) {
+    throw new Error(imagesPerProductLimitMessage(ADMIN_LIMITS.maxImagesPerProduct));
+  }
 
   const modeCategory = normalizeModeCategoryInput(category);
   const requiresModeSubcategory = modeCategory === "Clothes";
@@ -169,6 +178,9 @@ function toPayload(form: ProductFormState): Omit<Product, "id" | "slug"> {
   const colorImages: ColorImagesMap = {};
   for (const color of colors) {
     const imagesForColor = uniqueImageUrls(getColorImages(form.colorImages, color));
+    if (imagesForColor.length > ADMIN_LIMITS.maxImagesPerColor) {
+      throw new Error(imagesPerColorLimitMessage(ADMIN_LIMITS.maxImagesPerColor, color));
+    }
     if (imagesForColor.length > 0) {
       colorImages[color] = imagesForColor;
     }
@@ -264,6 +276,10 @@ export default function AdminBoutique() {
   }
 
   function openCreateForm() {
+    if (products.length >= ADMIN_LIMITS.maxProducts) {
+      setProductsError(productLimitReachedMessage(products.length, ADMIN_LIMITS.maxProducts));
+      return;
+    }
     setFormMode("create");
     setEditingId(null);
     setForm(EMPTY_FORM);
@@ -303,8 +319,6 @@ export default function AdminBoutique() {
   }
 
   async function handleImageUpload(file: File): Promise<string | null> {
-    setImageUploadError("");
-
     try {
       const body = new FormData();
       body.append("file", file);
@@ -330,20 +344,39 @@ export default function AdminBoutique() {
   async function handleImageFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
+    setImageUploadError("");
+
+    const currentCount = uniqueImageUrls(form.images).length;
+    const remainingSlots = ADMIN_LIMITS.maxImagesPerProduct - currentCount;
+    if (remainingSlots <= 0) {
+      setImageUploadError(imagesPerProductLimitMessage(ADMIN_LIMITS.maxImagesPerProduct));
+      e.target.value = "";
+      return;
+    }
+    const filesToUpload = files.slice(0, remainingSlots);
+    const ignoredFiles = files.length - filesToUpload.length;
 
     setImageUploading(true);
     const uploadedUrls: string[] = [];
 
     try {
-      for (const file of files) {
+      for (const file of filesToUpload) {
         const url = await handleImageUpload(file);
         if (url) uploadedUrls.push(url);
       }
       if (uploadedUrls.length > 0) {
         setForm((prev) => ({
           ...prev,
-          images: Array.from(new Set([...prev.images, ...uploadedUrls])),
+          images: Array.from(new Set([...prev.images, ...uploadedUrls])).slice(
+            0,
+            ADMIN_LIMITS.maxImagesPerProduct
+          ),
         }));
+      }
+      if (ignoredFiles > 0) {
+        setImageUploadError(
+          `Only ${remainingSlots} image(s) were added. Maximum ${ADMIN_LIMITS.maxImagesPerProduct} images per product.`
+        );
       }
     } finally {
       setImageUploading(false);
@@ -384,6 +417,10 @@ export default function AdminBoutique() {
 
     if (imageUploading) {
       setFormError("Attendez la fin de l'upload des images.");
+      return;
+    }
+    if (formMode === "create" && products.length >= ADMIN_LIMITS.maxProducts) {
+      setFormError(productLimitReachedMessage(products.length, ADMIN_LIMITS.maxProducts));
       return;
     }
 
@@ -691,12 +728,23 @@ export default function AdminBoutique() {
   async function handleColorImageFileChange(color: string, e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
+    setImageUploadError("");
+
+    const currentColorImages = getColorImages(form.colorImages, color);
+    const remainingSlots = ADMIN_LIMITS.maxImagesPerColor - currentColorImages.length;
+    if (remainingSlots <= 0) {
+      setImageUploadError(imagesPerColorLimitMessage(ADMIN_LIMITS.maxImagesPerColor, color));
+      e.target.value = "";
+      return;
+    }
+    const filesToUpload = files.slice(0, remainingSlots);
+    const ignoredFiles = files.length - filesToUpload.length;
 
     setImageUploading(true);
     const uploadedUrls: string[] = [];
 
     try {
-      for (const file of files) {
+      for (const file of filesToUpload) {
         const url = await handleImageUpload(file);
         if (url) uploadedUrls.push(url);
       }
@@ -704,7 +752,10 @@ export default function AdminBoutique() {
       if (uploadedUrls.length > 0) {
         setForm((prev) => {
           const current = getColorImages(prev.colorImages, color);
-          const merged = uniqueImageUrls([...current, ...uploadedUrls]);
+          const merged = uniqueImageUrls([...current, ...uploadedUrls]).slice(
+            0,
+            ADMIN_LIMITS.maxImagesPerColor
+          );
           const normalized = normalizeColorName(color);
           const nextMap = { ...prev.colorImages };
 
@@ -719,6 +770,11 @@ export default function AdminBoutique() {
 
           return { ...prev, colorImages: nextMap };
         });
+      }
+      if (ignoredFiles > 0) {
+        setImageUploadError(
+          `Only ${remainingSlots} image(s) were added for ${color}. Maximum ${ADMIN_LIMITS.maxImagesPerColor} images per color.`
+        );
       }
     } finally {
       setImageUploading(false);
@@ -773,6 +829,8 @@ export default function AdminBoutique() {
 
   const modeCount = products.filter((p) => p.universe === "mode").length;
   const categoryCount = categories.length;
+  const maxProductsReached = products.length >= ADMIN_LIMITS.maxProducts;
+  const remainingProductSlots = Math.max(0, ADMIN_LIMITS.maxProducts - products.length);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -808,7 +866,13 @@ export default function AdminBoutique() {
           <button
             type="button"
             onClick={openCreateForm}
-            className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[var(--accent-deep)]"
+            disabled={maxProductsReached}
+            title={
+              maxProductsReached
+                ? productLimitReachedMessage(products.length, ADMIN_LIMITS.maxProducts)
+                : "Create a new product"
+            }
+            className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[var(--accent-deep)] disabled:cursor-not-allowed disabled:opacity-60"
           >
             Add product
           </button>
@@ -819,6 +883,10 @@ export default function AdminBoutique() {
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Total products</p>
           <p className="mt-2 text-2xl font-bold text-[var(--foreground)]">{products.length}</p>
+          <p className="mt-1 text-xs text-[var(--muted)]">
+            Limit: {ADMIN_LIMITS.maxProducts} ({remainingProductSlots} slot
+            {remainingProductSlots > 1 ? "s" : ""} remaining)
+          </p>
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Boutique</p>
@@ -1185,7 +1253,8 @@ export default function AdminBoutique() {
                     JPG, PNG, WEBP, or AVIF. Max size: 8MB per image. You can select multiple files.
                   </p>
                   <p className="mt-1 text-[11px] text-[var(--muted)]">
-                    The first image will be used as the main image.
+                    The first image will be used as the main image. Limit: {ADMIN_LIMITS.maxImagesPerProduct} images
+                    per product ({form.images.length}/{ADMIN_LIMITS.maxImagesPerProduct}).
                   </p>
 
                   {imageUploading && (
@@ -1370,6 +1439,9 @@ export default function AdminBoutique() {
                                 className="hidden"
                               />
                             </div>
+                            <p className="mb-2 text-[10px] uppercase tracking-[0.12em] text-[var(--muted)]">
+                              Limit: {colorImages.length}/{ADMIN_LIMITS.maxImagesPerColor} images for this color.
+                            </p>
 
                             {colorImages.length === 0 ? (
                               <p className="text-[11px] text-[var(--muted)]">
@@ -1481,7 +1553,13 @@ export default function AdminBoutique() {
             <button
               type="button"
               onClick={openCreateForm}
-              className="mt-4 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
+              disabled={maxProductsReached}
+              title={
+                maxProductsReached
+                  ? productLimitReachedMessage(products.length, ADMIN_LIMITS.maxProducts)
+                  : "Create a new product"
+              }
+              className="mt-4 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               Add product
             </button>
