@@ -399,7 +399,7 @@ export default function AdminBoutique() {
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setProductsError(data.error || "Suppression impossible.");
+        setProductsError(data.error || "Unable to delete product.");
         return;
       }
 
@@ -416,7 +416,7 @@ export default function AdminBoutique() {
     setFormError("");
 
     if (imageUploading) {
-      setFormError("Attendez la fin de l'upload des images.");
+      setFormError("Wait for image uploads to finish.");
       return;
     }
     if (formMode === "create" && products.length >= ADMIN_LIMITS.maxProducts) {
@@ -889,7 +889,7 @@ export default function AdminBoutique() {
           </p>
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Boutique</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">Store</p>
           <p className="mt-2 text-sm text-[var(--foreground)]">
             Fashion: <span className="font-semibold">{modeCount}</span>
           </p>
@@ -1146,7 +1146,7 @@ export default function AdminBoutique() {
               className="mt-1 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--foreground)]"
             >
               <option value="category">Category</option>
-              <option value="name">Nom (A-Z)</option>
+              <option value="name">Name (A-Z)</option>
               <option value="price-asc">Price low to high</option>
               <option value="price-desc">Price high to low</option>
             </select>
@@ -1192,7 +1192,7 @@ export default function AdminBoutique() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)]">Boutique</label>
+                  <label className="block text-sm font-medium text-[var(--foreground)]">Store</label>
                   <div className="mt-1 rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm text-[var(--muted)]">
                     Fashion
                   </div>

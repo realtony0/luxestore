@@ -15,6 +15,8 @@ const siteUrl = getSiteUrl();
 const socialImage = DEFAULT_SOCIAL_IMAGE;
 const whatsappNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "8619706419469").replace(/\D+/g, "");
 
+export const dynamic = "force-dynamic";
+
 const commitments = [
   {
     title: "Curated Streetwear Selection",
@@ -91,14 +93,14 @@ const faqs = [
 export const metadata: Metadata = {
   title: "About",
   description: "Why choose Luxe Store: commitments, customer reviews, and FAQ.",
-  keywords: [...BRAND_KEYWORDS, "about luxe store", "faq boutique mode"],
+  keywords: [...BRAND_KEYWORDS, "about luxe store", "fashion store faq"],
   alternates: {
-    canonical: "/pourquoi-nous",
+    canonical: "/about",
   },
   openGraph: {
     title: `Why choose ${SITE_NAME}`,
     description: "Commitments, customer reviews, and a clear professional order flow.",
-    url: getCanonicalUrl("/pourquoi-nous"),
+    url: getCanonicalUrl("/about"),
     images: [
       {
         url: socialImage,
@@ -135,8 +137,8 @@ export default async function PourquoiNousPage() {
     "@graph": [
       {
         "@type": "WebPage",
-        "@id": `${siteUrl}/pourquoi-nous#webpage`,
-        url: `${siteUrl}/pourquoi-nous`,
+        "@id": `${siteUrl}/about#webpage`,
+        url: `${siteUrl}/about`,
         name: "About - Luxe Store",
         inLanguage: "en",
         isPartOf: {
@@ -156,7 +158,7 @@ export default async function PourquoiNousPage() {
             "@type": "ListItem",
             position: 2,
             name: "About",
-            item: `${siteUrl}/pourquoi-nous`,
+            item: `${siteUrl}/about`,
           },
         ],
       },
@@ -323,7 +325,7 @@ export default async function PourquoiNousPage() {
               Write on WhatsApp
             </a>
             <Link
-              href="/panier"
+              href="/cart"
               className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
             >
               Open cart
@@ -342,7 +344,7 @@ export default async function PourquoiNousPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link
-              href="/mode"
+              href="/fashion"
               className="inline-flex items-center justify-center rounded-xl bg-[var(--accent)] px-7 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-[var(--accent-deep)]"
             >
               Shop Fashion

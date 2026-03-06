@@ -35,7 +35,7 @@ export default function AdminLogin() {
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-sm">
         <h1 className="font-heading text-2xl font-semibold text-[var(--foreground)]">
-          Administration
+          Admin
         </h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
           Luxe Store

@@ -138,7 +138,7 @@ export default function CommandeForm() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-semibold text-[var(--foreground)]">Order from cart</p>
               <Link
-                href="/panier"
+                href="/cart"
                 className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)] transition hover:text-[var(--accent)]"
               >
                 Edit cart

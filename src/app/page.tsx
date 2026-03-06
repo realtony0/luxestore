@@ -14,17 +14,17 @@ const heroImage =
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=80";
 
 export const metadata: Metadata = {
-  title: "Boutique Mode En Ligne",
+  title: "Online Fashion Store",
   description:
-    "Commandez vos vetements, chaussures, perruques, lunettes et accessoires sur Luxe Store.",
+    "Shop clothing, shoes, wigs, sunglasses, bags, and accessories at Luxe Store.",
   keywords: BRAND_KEYWORDS,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: `${SITE_NAME} — Boutique Mode En Ligne`,
+    title: `${SITE_NAME} — Online Fashion Store`,
     description:
-      "Selection mode, streetwear et accessoires avec commande rapide via WhatsApp.",
+      "Fashion, streetwear, and accessories with fast ordering through WhatsApp.",
     type: "website",
     url: getCanonicalUrl("/"),
     images: [
@@ -32,15 +32,15 @@ export const metadata: Metadata = {
         url: DEFAULT_SOCIAL_IMAGE,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} - Boutique mode`,
+        alt: `${SITE_NAME} - Fashion store`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Boutique Mode En Ligne`,
+    title: `${SITE_NAME} — Online Fashion Store`,
     description:
-      "Selection mode, streetwear et accessoires avec commande rapide via WhatsApp.",
+      "Fashion, streetwear, and accessories with fast ordering through WhatsApp.",
     images: [DEFAULT_SOCIAL_IMAGE],
   },
 };
@@ -103,10 +103,10 @@ export default function Home() {
 
         <div className="mx-auto mt-8 flex w-full max-w-sm flex-col items-center gap-3 sm:mt-10 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
           <Link
-            href="/mode"
+            href="/fashion"
             className="font-display inline-flex w-full items-center justify-center rounded-xl border-2 border-[var(--accent)] bg-[var(--accent)] px-8 py-3.5 text-xl tracking-[0.08em] text-white transition hover:bg-[var(--accent-deep)] hover:border-[var(--accent-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:w-auto sm:min-w-56 sm:px-12 sm:py-4 sm:text-2xl sm:tracking-[0.1em]"
           >
-            Voir la boutique
+            Shop now
           </Link>
         </div>
       </div>

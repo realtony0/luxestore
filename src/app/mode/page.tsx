@@ -13,20 +13,20 @@ import { BRAND_KEYWORDS, DEFAULT_SOCIAL_IMAGE, SITE_NAME, getCanonicalUrl, getSi
 const heroImage =
   "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=2000&q=80";
 const siteUrl = getSiteUrl();
-const canonicalPath = "/mode";
+const canonicalPath = "/fashion";
 
 export const metadata: Metadata = {
   title: "Fashion",
   description:
-    "Explorez la collection mode de Luxe Store: vetements, chaussures, perruques, lunettes et accessoires.",
-  keywords: [...BRAND_KEYWORDS, "collection mode", "shop fashion"],
+    "Explore Luxe Store's fashion collection: clothing, shoes, wigs, sunglasses, and accessories.",
+  keywords: [...BRAND_KEYWORDS, "fashion collection", "shop fashion"],
   alternates: {
     canonical: canonicalPath,
   },
   openGraph: {
     title: `${SITE_NAME} — Fashion`,
     description:
-      "Explorez la collection mode de Luxe Store: vetements, chaussures, perruques, lunettes et accessoires.",
+      "Explore Luxe Store's fashion collection: clothing, shoes, wigs, sunglasses, and accessories.",
     url: getCanonicalUrl(canonicalPath),
     type: "website",
     images: [
@@ -42,12 +42,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_NAME} — Fashion`,
     description:
-      "Explorez la collection mode de Luxe Store: vetements, chaussures, perruques, lunettes et accessoires.",
+      "Explore Luxe Store's fashion collection: clothing, shoes, wigs, sunglasses, and accessories.",
     images: [DEFAULT_SOCIAL_IMAGE],
   },
 };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 function slug(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/\s+/g, "-");
@@ -99,7 +99,7 @@ export default async function ModePage() {
         url: `${siteUrl}${canonicalPath}`,
         name: `${SITE_NAME} Fashion`,
         description:
-          "Collection mode: vetements, chaussures, perruques, lunettes de soleil et accessoires.",
+          "Fashion collection: clothing, shoes, wigs, sunglasses, and accessories.",
         inLanguage: "en",
         isPartOf: {
           "@id": `${siteUrl}/#website`,

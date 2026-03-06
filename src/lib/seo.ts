@@ -4,16 +4,16 @@ export const SITE_NAME = "Luxe Store";
 export const DEFAULT_SOCIAL_IMAGE =
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&h=630&q=80";
 export const DEFAULT_DESCRIPTION =
-  "Luxe Store: boutique en ligne de vetements, chaussures, perruques, lunettes et accessoires.";
+  "Luxe Store: online fashion store for clothing, shoes, wigs, sunglasses, bags, and accessories.";
 export const BRAND_KEYWORDS = [
   "luxe store",
-  "boutique mode en ligne",
-  "streetwear femme",
-  "streetwear homme",
-  "chaussures tendance",
-  "perruques",
-  "lunettes de soleil",
-  "sacs et accessoires",
+  "online fashion store",
+  "women's streetwear",
+  "men's streetwear",
+  "trendy shoes",
+  "wigs",
+  "sunglasses",
+  "bags and accessories",
 ];
 
 function sanitizeUrl(value: string): string {

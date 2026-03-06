@@ -115,7 +115,7 @@ export default function AddToCartActions({ product, backHref, initialColor, onCo
       {selectedColorImages.length > 0 && (
         <div className="mb-6">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
-            Photos {activeColor}
+            Images {activeColor ? `· ${activeColor}` : ""}
           </p>
           <div className="mt-2 grid grid-cols-4 gap-2">
             {selectedColorImages.slice(0, 8).map((image, index) => (
@@ -162,20 +162,20 @@ export default function AddToCartActions({ product, backHref, initialColor, onCo
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row">
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={sizeOptions.length > 0 && !selectedSize}
-        className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-[var(--foreground)] px-6 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:min-w-52 sm:px-8 sm:py-4"
-      >
-        {justAdded ? "Added to cart" : "Add to cart"}
-      </button>
-      <Link
-        href={backHref}
-        className="inline-flex h-12 w-full items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] px-6 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:min-w-52 sm:px-8 sm:py-4"
-      >
-        Continue shopping
-      </Link>
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          disabled={sizeOptions.length > 0 && !selectedSize}
+          className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-[var(--foreground)] px-6 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:min-w-52 sm:px-8 sm:py-4"
+        >
+          {justAdded ? "Added to cart" : "Add to cart"}
+        </button>
+        <Link
+          href={backHref}
+          className="inline-flex h-12 w-full items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] px-6 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:w-auto sm:min-w-52 sm:px-8 sm:py-4"
+        >
+          Continue shopping
+        </Link>
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ export default function PanierView() {
         <p className="mt-2 text-[var(--muted)]">Your cart is empty.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Link
-            href="/mode"
+            href="/fashion"
             className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-[var(--foreground)] px-6 text-sm font-semibold text-[var(--background)] transition hover:opacity-90 sm:h-auto sm:w-auto sm:py-3"
           >
             Browse Fashion
@@ -152,13 +152,13 @@ export default function PanierView() {
           </div>
 
           <Link
-            href="/commande"
+            href="/checkout"
             className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[var(--foreground)] px-5 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:py-3"
           >
             Proceed to checkout
           </Link>
           <Link
-            href="/mode"
+            href="/fashion"
             className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[var(--border)] px-5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:py-3"
           >
             Continue shopping

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug, getProducts } from "@/lib/products-server";
+import { getProductBySlug } from "@/lib/products-server";
 import { getModeSubcategories } from "@/lib/categories-data";
 import { formatPrice } from "@/lib/products";
 import { resolveModeDisplayCategory } from "@/lib/universe-categories";
@@ -24,14 +24,7 @@ function toAbsoluteUrl(value: string): string {
   return `${siteUrl}${path}`;
 }
 
-export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  const products = await getProducts();
-  return products
-    .filter((product) => product.universe === "mode")
-    .map((product) => ({ slug: product.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -99,7 +92,7 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProductBySlug(slug);
   if (!product || product.universe !== "mode") notFound();
 
-  const backHref = "/mode";
+  const backHref = "/fashion";
   const modeDisplay = resolveModeDisplayCategory(product.category, await getModeSubcategories());
   const displayedCategory = modeDisplay.category || "Fashion";
   const displayedSubCategory = modeDisplay.subCategory || null;
@@ -156,7 +149,7 @@ export default async function ProductPage({ params }: Props) {
             "@type": "ListItem",
             position: 2,
             name: "Fashion",
-            item: getCanonicalUrl("/mode"),
+            item: getCanonicalUrl("/fashion"),
           },
           {
             "@type": "ListItem",

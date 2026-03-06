@@ -7,8 +7,8 @@ import { useCart } from "@/components/cart/CartProvider";
 
 const nav = [
   { href: "/", label: "Home" },
-  { href: "/mode", label: "Fashion" },
-  { href: "/pourquoi-nous", label: "About" },
+  { href: "/fashion", label: "Fashion" },
+  { href: "/about", label: "About" },
 ] as const;
 
 export default function Header() {
@@ -58,11 +58,11 @@ export default function Header() {
           </nav>
 
           <Link
-            href="/panier"
+            href="/cart"
             onClick={closeMenu}
             aria-label="Cart"
             className={
-              isActive("/panier")
+              isActive("/cart")
                 ? "relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)] text-white transition"
                 : "relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-darker)]"
             }

@@ -41,7 +41,7 @@ export default function HomeHero() {
         </p>
         <div className={`mt-10 flex flex-col items-center gap-3 ${motionClass}`} style={delay(2)}>
           <Link
-            href="/mode"
+            href="/fashion"
             className="inline-flex w-full max-w-xs items-center justify-center rounded-full bg-[var(--accent)] px-8 py-3.5 text-sm font-medium text-white transition hover:bg-[var(--accent-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--foreground)]"
           >
             View shop

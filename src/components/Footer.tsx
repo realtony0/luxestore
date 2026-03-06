@@ -8,8 +8,8 @@ const SITE_ADDRESS = "Worldwide online store";
 
 const footerNav = [
   { href: "/", label: "Home" },
-  { href: "/mode", label: "Fashion" },
-  { href: "/pourquoi-nous", label: "About" },
+  { href: "/fashion", label: "Fashion" },
+  { href: "/about", label: "About" },
 ] as const;
 
 export default function Footer() {
