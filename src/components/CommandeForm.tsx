@@ -13,10 +13,34 @@ const ORDER_EMAIL = (process.env.NEXT_PUBLIC_ORDER_EMAIL || DEFAULT_ORDER_EMAIL)
 const phoneRegex = /^[\d\s+.-]{8,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const COUNTRIES = [
+  { name: "Liberia", code: "LR", dial: "+231" },
+  { name: "United States", code: "US", dial: "+1" },
+  { name: "United Kingdom", code: "UK", dial: "+44" },
+  { name: "France", code: "FR", dial: "+33" },
+  { name: "China", code: "CN", dial: "+86" },
+  { name: "Nigeria", code: "NG", dial: "+234" },
+  { name: "Ghana", code: "GH", dial: "+233" },
+  { name: "Sierra Leone", code: "SL", dial: "+232" },
+  { name: "Guinea", code: "GN", dial: "+224" },
+  { name: "Ivory Coast", code: "CI", dial: "+225" },
+  { name: "Senegal", code: "SN", dial: "+221" },
+  { name: "Cameroon", code: "CM", dial: "+237" },
+  { name: "South Africa", code: "ZA", dial: "+27" },
+  { name: "Kenya", code: "KE", dial: "+254" },
+  { name: "Germany", code: "DE", dial: "+49" },
+  { name: "Canada", code: "CA", dial: "+1" },
+  { name: "India", code: "IN", dial: "+91" },
+];
+
 type FormErrors = {
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   phone?: string;
+  city?: string;
+  zipCode?: string;
+  address1?: string;
   message?: string;
 };
 
@@ -33,9 +57,16 @@ export default function CommandeForm() {
   const searchParams = useSearchParams();
   const { items, hydrated, itemCount, subtotal } = useCart();
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("Liberia");
+  const [city, setCity] = useState("");
+  const [stateProvince, setStateProvince] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
   const [article, setArticle] = useState(() => {
     const value = searchParams.get("article");
     return value ? decodeURIComponent(value) : "";
@@ -47,6 +78,8 @@ export default function CommandeForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const hasCartItems = hydrated && items.length > 0;
 
+  const selectedCountry = COUNTRIES.find((c) => c.name === location) || COUNTRIES[0];
+
   const cartLabel = useMemo(() => {
     if (!hasCartItems) return "";
     return `${itemCount} item${itemCount > 1 ? "s" : ""} - ${formatPrice(subtotal)}`;
@@ -55,14 +88,22 @@ export default function CommandeForm() {
   function validate(): boolean {
     const next: FormErrors = {};
 
-    if (!name.trim()) next.name = "Name is required.";
-    else if (name.trim().length < 2) next.name = "At least 2 characters.";
+    if (!firstName.trim()) next.firstName = "First name is required.";
+    else if (firstName.trim().length < 2) next.firstName = "At least 2 characters.";
+
+    if (!lastName.trim()) next.lastName = "Last name is required.";
+    else if (lastName.trim().length < 2) next.lastName = "At least 2 characters.";
 
     if (email.trim() && !emailRegex.test(email.trim())) next.email = "Invalid email.";
 
-    if (phone.trim() && !phoneRegex.test(phone.trim())) {
-      next.phone = "Invalid phone number.";
-    }
+    if (!phone.trim()) next.phone = "Phone number is required.";
+    else if (!phoneRegex.test(phone.trim())) next.phone = "Invalid phone number.";
+
+    if (!city.trim()) next.city = "City is required.";
+
+    if (!zipCode.trim()) next.zipCode = "Post/Zip code is required.";
+
+    if (!address1.trim()) next.address1 = "Address is required.";
 
     if (!message.trim()) next.message = "Message is required.";
     else if (message.trim().length < 8) next.message = "Minimum 8 characters.";
@@ -72,14 +113,30 @@ export default function CommandeForm() {
   }
 
   function composeOrderMessage(): string {
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
+    const fullPhone = `${selectedCountry.dial} ${phone.trim()}`;
+    const fullAddress = [
+      address1.trim(),
+      address2.trim(),
+      city.trim(),
+      stateProvince.trim(),
+      zipCode.trim(),
+      location,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
     const lines = [
       "Hello Luxe Store,",
       "",
       "I would like to place an order.",
       "",
-      `Name: ${name.trim()}`,
+      `Name: ${fullName}`,
       `Email: ${email.trim() || "Not provided"}`,
-      `Phone: ${phone.trim() || "Not provided"}`,
+      `Phone: ${fullPhone}`,
+      "",
+      "Shipping Address:",
+      `${fullAddress}`,
     ];
 
     if (hasCartItems) {
@@ -119,6 +176,11 @@ export default function CommandeForm() {
     setLoading(false);
     setSent(true);
   }
+
+  const inputClass =
+    "mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20";
+  const labelClass = "block text-sm font-medium text-[var(--foreground)]";
+  const errorClass = "mt-1 text-sm text-[var(--accent-deep)]";
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
@@ -167,107 +229,262 @@ export default function CommandeForm() {
         )}
 
         <form onSubmit={handleSubmit} className="mt-7 space-y-5 sm:mt-8" noValidate>
-          <div className="grid gap-4 sm:grid-cols-2">
+          {/* Shipping Address Section */}
+          <div className="space-y-5">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">Shipping Address</h2>
+
+            {/* Location */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-[var(--foreground)]">
-                Name *
+              <label htmlFor="location" className={labelClass}>
+                Location *
               </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                aria-invalid={errors.name ? "true" : "false"}
-                aria-describedby={errors.name ? "name-error" : undefined}
-                className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
-                placeholder="Your name"
-              />
-              {errors.name && (
-                <p id="name-error" className="mt-1 text-sm text-[var(--accent-deep)]" role="alert">
-                  {errors.name}
-                </p>
-              )}
+              <select
+                id="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className={inputClass + " appearance-none cursor-pointer"}
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)]">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                aria-invalid={errors.email ? "true" : "false"}
-                aria-describedby={errors.email ? "email-error" : undefined}
-                className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
-                placeholder="you@example.com"
-              />
-              {errors.email && (
-                <p id="email-error" className="mt-1 text-sm text-[var(--accent-deep)]" role="alert">
-                  {errors.email}
-                </p>
-              )}
-            </div>
-          </div>
+            {/* First Name / Last Name */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="firstName" className={labelClass}>
+                  First Name *
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  aria-invalid={errors.firstName ? "true" : "false"}
+                  aria-describedby={errors.firstName ? "firstName-error" : undefined}
+                  className={inputClass}
+                  placeholder="First name"
+                />
+                {errors.firstName && (
+                  <p id="firstName-error" className={errorClass} role="alert">
+                    {errors.firstName}
+                  </p>
+                )}
+              </div>
 
-          <div className={`grid gap-4 ${hasCartItems ? "" : "sm:grid-cols-2"}`}>
+              <div>
+                <label htmlFor="lastName" className={labelClass}>
+                  Last Name *
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  aria-invalid={errors.lastName ? "true" : "false"}
+                  aria-describedby={errors.lastName ? "lastName-error" : undefined}
+                  className={inputClass}
+                  placeholder="Last name"
+                />
+                {errors.lastName && (
+                  <p id="lastName-error" className={errorClass} role="alert">
+                    {errors.lastName}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Phone Number with country code */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-[var(--foreground)]">
-                Phone
+              <label htmlFor="phone" className={labelClass}>
+                Phone Number *
               </label>
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                aria-invalid={errors.phone ? "true" : "false"}
-                aria-describedby={errors.phone ? "phone-error" : undefined}
-                className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
-                placeholder="Ex. +86 1970 641 9469"
-              />
+              <div className="mt-1 flex">
+                <span className="inline-flex items-center rounded-l-lg border border-r-0 border-[var(--border)] bg-[var(--background)] px-3 text-sm text-[var(--muted)]">
+                  {selectedCountry.code} {selectedCountry.dial}
+                </span>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  aria-invalid={errors.phone ? "true" : "false"}
+                  aria-describedby={errors.phone ? "phone-error" : undefined}
+                  className="w-full rounded-r-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
+                  placeholder="Phone number"
+                />
+              </div>
+              <p className="mt-1 text-xs text-[var(--muted)]">Need Correct Phone Number for delivery.</p>
               {errors.phone && (
-                <p id="phone-error" className="mt-1 text-sm text-[var(--accent-deep)]" role="alert">
+                <p id="phone-error" className={errorClass} role="alert">
                   {errors.phone}
                 </p>
               )}
             </div>
 
-            {!hasCartItems && (
+            {/* City / State */}
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="article" className="block text-sm font-medium text-[var(--foreground)]">
-                  Item
+                <label htmlFor="city" className={labelClass}>
+                  City *
                 </label>
                 <input
-                  id="article"
+                  id="city"
                   type="text"
-                  value={article}
-                  onChange={(e) => setArticle(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
-                  placeholder="Item name"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                  aria-invalid={errors.city ? "true" : "false"}
+                  aria-describedby={errors.city ? "city-error" : undefined}
+                  className={inputClass}
+                  placeholder="City"
+                />
+                {errors.city && (
+                  <p id="city-error" className={errorClass} role="alert">
+                    {errors.city}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="stateProvince" className={labelClass}>
+                  State/Province (Optional)
+                </label>
+                <input
+                  id="stateProvince"
+                  type="text"
+                  value={stateProvince}
+                  onChange={(e) => setStateProvince(e.target.value)}
+                  className={inputClass}
+                  placeholder="State or province"
                 />
               </div>
+            </div>
+
+            {/* Zip Code */}
+            <div>
+              <label htmlFor="zipCode" className={labelClass}>
+                Post/Zip Code *
+              </label>
+              <input
+                id="zipCode"
+                type="text"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                required
+                aria-invalid={errors.zipCode ? "true" : "false"}
+                aria-describedby={errors.zipCode ? "zipCode-error" : undefined}
+                className={inputClass}
+                placeholder="Postal or zip code"
+              />
+              {errors.zipCode && (
+                <p id="zipCode-error" className={errorClass} role="alert">
+                  {errors.zipCode}
+                </p>
+              )}
+            </div>
+
+            {/* Address Line 1 / Address Line 2 */}
+            <div>
+              <label htmlFor="address1" className={labelClass}>
+                Address Line 1 *
+              </label>
+              <input
+                id="address1"
+                type="text"
+                value={address1}
+                onChange={(e) => setAddress1(e.target.value)}
+                required
+                aria-invalid={errors.address1 ? "true" : "false"}
+                aria-describedby={errors.address1 ? "address1-error" : undefined}
+                className={inputClass}
+                placeholder="Street address"
+              />
+              {errors.address1 && (
+                <p id="address1-error" className={errorClass} role="alert">
+                  {errors.address1}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="address2" className={labelClass}>
+                Address Line 2
+              </label>
+              <input
+                id="address2"
+                type="text"
+                value={address2}
+                onChange={(e) => setAddress2(e.target.value)}
+                className={inputClass}
+                placeholder="Apartment, suite, etc. (optional)"
+              />
+            </div>
+          </div>
+
+          {/* Email (optional) */}
+          <div>
+            <label htmlFor="email" className={labelClass}>
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={errors.email ? "true" : "false"}
+              aria-describedby={errors.email ? "email-error" : undefined}
+              className={inputClass}
+              placeholder="you@example.com"
+            />
+            {errors.email && (
+              <p id="email-error" className={errorClass} role="alert">
+                {errors.email}
+              </p>
             )}
           </div>
 
+          {/* Item field when cart is empty */}
+          {!hasCartItems && (
+            <div>
+              <label htmlFor="article" className={labelClass}>
+                Item
+              </label>
+              <input
+                id="article"
+                type="text"
+                value={article}
+                onChange={(e) => setArticle(e.target.value)}
+                className={inputClass}
+                placeholder="Item name"
+              />
+            </div>
+          )}
+
+          {/* Message */}
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-[var(--foreground)]">
+            <label htmlFor="message" className={labelClass}>
               Message *
             </label>
             <textarea
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              rows={6}
+              rows={4}
               required
               aria-invalid={errors.message ? "true" : "false"}
               aria-describedby={errors.message ? "message-error" : undefined}
-              className="mt-1 w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
-              placeholder="Add details (quantity, size, color, delivery city, preferred timeline)."
+              className={inputClass + " resize-y"}
+              placeholder="Additional details (quantity, size, color, preferred timeline)."
             />
             {errors.message && (
-              <p id="message-error" className="mt-1 text-sm text-[var(--accent-deep)]" role="alert">
+              <p id="message-error" className={errorClass} role="alert">
                 {errors.message}
               </p>
             )}
