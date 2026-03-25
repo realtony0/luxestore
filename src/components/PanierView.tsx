@@ -151,6 +151,10 @@ export default function PanierView() {
             </div>
           </div>
 
+          <p className="mt-4 text-xs leading-relaxed text-[var(--muted)]">
+            Shipping: $14 on orders over $130 — Delivery in 7-10 business days
+          </p>
+
           <Link
             href="/checkout"
             className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[var(--foreground)] px-5 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 sm:h-auto sm:py-3"
