@@ -152,7 +152,7 @@ export default function PanierView() {
           </div>
 
           <p className="mt-4 text-xs leading-relaxed text-[var(--muted)]">
-            Shipping: $14 on orders over $130 — Delivery in 7-10 business days
+            Free shipping on orders over $170 — Orders below: $12 shipping. Delivery in 10-12 business days.
           </p>
 
           <Link
